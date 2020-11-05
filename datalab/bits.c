@@ -378,7 +378,9 @@ int bang(int x) {
  *   Rating: 4
  */
 int isNonZero(int x) {
-  return 2;
+  x |= ~x + 0x01;
+  x >>= 31;
+  return x & 0x01;
 }
 /*
  * logicalNeg - implement the ! operator, using all of
