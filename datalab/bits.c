@@ -154,7 +154,7 @@ int bitAnd(int x, int y) {
  *   Rating: 1
  */
 int bitMatch(int x, int y) {
-  return 2;
+  return ~(~(x & y) & ~(~x & ~y));
 }
 /*
  * bitNor - ~(x|y) using only ~ and &
@@ -174,7 +174,7 @@ int bitNor(int x, int y) {
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return 2;
+  return (~(x & y)) & (~((~x) & (~y)));
 }
 //2
 /*
@@ -197,7 +197,10 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int anyEvenBit(int x) {
-  return 2;
+  int m8 = 0x55;
+  int m16 = m8 | (m8 << 8);
+  int m32 = m16 | (m16 << 16);
+  return !!(x & m32);
 }
 /*
  * byteSwap - swaps the nth byte and the mth byte
@@ -221,7 +224,9 @@ int byteSwap(int x, int n, int m) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  return 2;
+  int mover = 32 + (~n + 1);
+  int x_movido = (x << mover) >> mover;
+  return !(x ^ x_movido);
 }
 /*
  * negate - return -x
@@ -242,7 +247,8 @@ int negate(int x) {
  *  Rating: 2
  */
 int sign(int x) {
-    return 2;
+  int signo = x >> 31;
+  return signo | !!x;
 }
 //3
 /*
