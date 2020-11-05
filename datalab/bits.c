@@ -356,7 +356,8 @@ int replaceByte(int x, int n, int c) {
  *   Rating: 4
  */
 int absVal(int x) {
-  return 2;
+  int signoX = x >> 31;
+  return (signoX + x) ^ signoX;
 }
 /*
  * bang - Compute !x without using !
