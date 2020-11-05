@@ -277,7 +277,11 @@ int sign(int x) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  return 2;
+  int signoX = x >> 31;
+  int signoY = y >> 31;
+  int signoSuma = (x + y) >> 31;
+
+  return !(~(signoX ^ signoY) & (signoX ^ signoSuma));
 }
 /*
  * bitMask - Generate a mask consisting of all 1's
