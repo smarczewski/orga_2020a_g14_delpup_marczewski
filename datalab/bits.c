@@ -143,7 +143,7 @@ NOTES:
  *   Rating: 1
  */
 int bitAnd(int x, int y) {
-  return 2;
+  return ~(~x | ~y);
 }
 /*
  * bitMatch - Create mask indicating which bits in x match those in y
@@ -164,7 +164,7 @@ int bitMatch(int x, int y) {
  *   Rating: 1
  */
 int bitNor(int x, int y) {
-  return 2;
+  return ~x & ~y;
 }
 /*
  * bitXor - x^y using only ~ and &
@@ -186,7 +186,10 @@ int bitXor(int x, int y) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+  int Ax4 = (0xAA << 8 ) + 0xAA; //0xAAAA
+  int Ax8 = (Ax4  << 16) + Ax4;  //0xAAAAAAAA
+  int numA0 = (x & Ax8) ^ Ax8;  
+  return !numA0;
 }
 /*
  * anyEvenBit - return 1 if any even-numbered bit in word set to 1
@@ -212,7 +215,21 @@ int anyEvenBit(int x) {
  *  Rating: 2
  */
 int byteSwap(int x, int n, int m) {
-    return 2;
+  int bits_n = n << 3;
+  int bits_m = m << 3;
+
+  int nEnX = (x >> bits_n) & 0xFF;
+  int mEnX = (x >> bits_m) & 0xFF;
+
+  int mascara_m = 0xFF << bits_m;
+  int mascara_n = 0xFF << bits_n;
+
+  int Fx4 = (0xFF << 8 ) + 0xFF; //0xFFFF
+  int Fx8 = (Fx4  << 16) + Fx4;  //0xFFFFFFF
+
+  x &= (mascara_m ^ mascara_n) ^ Fx8 ;
+
+  return ( x ) | (mEnX << bits_n) | (nEnX << bits_m);
 }
 /*
  * fitsBits - return 1 if x can be represented as an
@@ -236,7 +253,7 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x + 1;
 }
 /*
  * sign - return 1 if positive, 0 if zero, and -1 if negative
@@ -260,7 +277,11 @@ int sign(int x) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  return 2;
+  int signoX = x >> 31;
+  int signoY = y >> 31;
+  int signoSuma = (x + y) >> 31;
+
+  return !(~(signoX ^ signoY) & (signoX ^ signoSuma));
 }
 /*
  * bitMask - Generate a mask consisting of all 1's
@@ -283,7 +304,9 @@ int bitMask(int highbit, int lowbit) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  x = !x << 31;
+  x >>= 31; 
+  return (~x & y) | (x & z);
 }
 /*
  * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters '0' to '9')
@@ -305,7 +328,11 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  return 2;
+  int signoX = x >> 31;
+  int signoY = y >> 31;
+  int signosIguales = !(((x ^ y) >> 31) | ((x + ~y) >> 31));
+  int signosDiferentes = (signoY) & !(signoX);  
+  return signosDiferentes | signosIguales;
 }
 /*
  * replaceByte(x,n,c) - Replace byte n in x with c
@@ -329,7 +356,8 @@ int replaceByte(int x, int n, int c) {
  *   Rating: 4
  */
 int absVal(int x) {
-  return 2;
+  int signoX = x >> 31;
+  return (signoX + x) ^ signoX;
 }
 /*
  * bang - Compute !x without using !
@@ -350,7 +378,9 @@ int bang(int x) {
  *   Rating: 4
  */
 int isNonZero(int x) {
-  return 2;
+  x |= ~x + 0x01;
+  x >>= 31;
+  return x & 0x01;
 }
 /*
  * logicalNeg - implement the ! operator, using all of
