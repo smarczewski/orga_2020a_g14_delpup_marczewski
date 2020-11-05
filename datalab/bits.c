@@ -253,7 +253,7 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x + 1;
 }
 /*
  * sign - return 1 if positive, 0 if zero, and -1 if negative
