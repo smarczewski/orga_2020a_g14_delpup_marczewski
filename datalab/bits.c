@@ -328,7 +328,11 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  return 2;
+  int signoX = x >> 31;
+  int signoY = y >> 31;
+  int signosIguales = !(((x ^ y) >> 31) | ((x + ~y) >> 31));
+  int signosDiferentes = (signoY) & !(signoX);  
+  return signosDiferentes | signosIguales;
 }
 /*
  * replaceByte(x,n,c) - Replace byte n in x with c
