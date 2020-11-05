@@ -143,7 +143,7 @@ NOTES:
  *   Rating: 1
  */
 int bitAnd(int x, int y) {
-  return 2;
+  return ~(~x | ~y);
 }
 /*
  * bitMatch - Create mask indicating which bits in x match those in y
