@@ -215,7 +215,21 @@ int anyEvenBit(int x) {
  *  Rating: 2
  */
 int byteSwap(int x, int n, int m) {
-    return 2;
+  int bits_n = n << 3;
+  int bits_m = m << 3;
+
+  int nEnX = (x >> bits_n) & 0xFF;
+  int mEnX = (x >> bits_m) & 0xFF;
+
+  int mascara_m = 0xFF << bits_m;
+  int mascara_n = 0xFF << bits_n;
+
+  int Fx4 = (0xFF << 8 ) + 0xFF; //0xFFFF
+  int Fx8 = (Fx4  << 16) + Fx4;  //0xFFFFFFF
+
+  x &= (mascara_m ^ mascara_n) ^ Fx8 ;
+
+  return ( x ) | (mEnX << bits_n) | (nEnX << bits_m);
 }
 /*
  * fitsBits - return 1 if x can be represented as an
