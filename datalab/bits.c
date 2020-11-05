@@ -186,7 +186,10 @@ int bitXor(int x, int y) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+  int Ax4 = (0xAA << 8 ) + 0xAA; //0xAAAA
+  int Ax8 = (Ax4  << 16) + Ax4;  //0xAAAAAAAA
+  int numA0 = (x & Ax8) ^ Ax8;  
+  return !numA0;
 }
 /*
  * anyEvenBit - return 1 if any even-numbered bit in word set to 1
