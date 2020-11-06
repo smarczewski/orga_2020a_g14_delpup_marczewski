@@ -492,22 +492,7 @@ int floatIsLess(unsigned uf, unsigned ug) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-    int esNegativo = uf >> 31;
-    int exponent = (uf >> 23) & 0xFF;
-    int absVal = uf & 0x7FFFFF; // absVal -> 23 len
-
-    if ( absVal > 0x7F800000 || exponent > 157) // NaN , Infinity
-      return 0x80000000u;
-
-    if(exponent < 127) return 0;
-
-    exponent -= 127;
-    if (exponent <= 23) absVal >>= (23 - exponent);
-    else absVal <<= (exponent - 23);
-
-    if(esNegativo)return -((1 << exponent) | absVal);
-
-    return ((1 << exponent) | absVal);
+  return 2;
 }
 /*
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
