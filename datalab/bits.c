@@ -393,6 +393,9 @@ int isNonZero(int x) {
 int logicalNeg(int x) {
   return 2;
 }
+
+
+
 //float
 /*
  * floatAbsVal - Return bit-level equivalent of absolute value of f for
@@ -406,7 +409,10 @@ int logicalNeg(int x) {
  *   Rating: 2
  */
 unsigned floatAbsVal(unsigned uf) {
-  return 2;
+  unsigned NaN = 0x7F800000; // NaN >
+  unsigned AbsVal = uf & 0x7FFFFFFF; // Signo 0
+  if ( AbsVal > NaN ) return uf;
+  return AbsVal;
 }
 /*
  * floatIsEqual - Compute f == g for floating point arguments f and g.
@@ -434,7 +440,11 @@ int floatIsEqual(unsigned uf, unsigned ug) {
  *   Rating: 2
  */
 unsigned floatNegate(unsigned uf) {
- return 2;
+  unsigned negativo = uf ^ (1 << 31); //cambia signo
+  unsigned NaN = 0x7F800000; // NaN >
+  unsigned AbsVal = uf & 0x7FFFFFFF; // Signo 0
+  if(AbsVal > NaN) return uf;
+  return negativo;
 }
 /*
  * floatIsLess - Compute f < g for floating point arguments f and g.
@@ -463,7 +473,24 @@ int floatIsLess(unsigned uf, unsigned ug) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+    int esNegativo = uf >> 31;
+    int exponent = (uf >> 23) & 0xFF; 
+    int absVal = uf & 0x7FFFFF; // absVal -> 23 len
+  
+    if ( absVal > 0x7F800000 || exponent > 157) // NaN , Infinity
+      return 0x80000000u;
+
+    if(exponent < 127) return 0;
+
+    exponent -= 127;
+    if (exponent <= 23) absVal >>= (23 - exponent);
+    else absVal <<= (exponent - 23);
+      
+    if(esNegativo)return -((1 << exponent) | absVal);
+
+    return ((1 << exponent) | absVal);
+
+
 }
 /*
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
