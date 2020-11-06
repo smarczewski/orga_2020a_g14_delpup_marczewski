@@ -323,7 +323,9 @@ int conditional(int x, int y, int z) {
 int isAsciiDigit(int x) {
   int limiteSuperior = 0x39;
   int limiteInferior = 0x30;
-  return (!((x + (~limiteInferior + 1) >> 31)) & ((x + ~limiteSuperior) >> 31));
+  int controlSuperior = ((x + ~limiteSuperior) >> 31);
+  int controlInferior = ((x + (~limiteInferior + 1)) >> 31);
+  return (!controlInferior) & controlSuperior;
 }
 /*
  * isGreater - if x > y  then return 1, else return 0
