@@ -188,7 +188,7 @@ int bitXor(int x, int y) {
 int allOddBits(int x) {
   int Ax4 = (0xAA << 8 ) + 0xAA; //0xAAAA
   int Ax8 = (Ax4  << 16) + Ax4;  //0xAAAAAAAA
-  int numA0 = (x & Ax8) ^ Ax8;  
+  int numA0 = (x & Ax8) ^ Ax8;
   return !numA0;
 }
 /*
@@ -294,7 +294,10 @@ int addOK(int x, int y) {
  *   Rating: 3
  */
 int bitMask(int highbit, int lowbit) {
-  return 2;
+  int todosUnos = ~0;
+  int mAlta = (todosUnos << highbit) << 1;
+  int mBaja = todosUnos << lowbit;
+  return ~(mAlta) & mBaja;
 }
 /*
  * conditional - same as x ? y : z
@@ -305,7 +308,7 @@ int bitMask(int highbit, int lowbit) {
  */
 int conditional(int x, int y, int z) {
   x = !x << 31;
-  x >>= 31; 
+  x >>= 31;
   return (~x & y) | (x & z);
 }
 /*
@@ -318,7 +321,9 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int limiteSuperior = 0x39;
+  int limiteInferior = 0x30;
+  return (!((x + (~limiteInferior + 1) >> 31)) & ((x + ~limiteSuperior) >> 31));
 }
 /*
  * isGreater - if x > y  then return 1, else return 0
@@ -331,7 +336,7 @@ int isGreater(int x, int y) {
   int signoX = x >> 31;
   int signoY = y >> 31;
   int signosIguales = !(((x ^ y) >> 31) | ((x + ~y) >> 31));
-  int signosDiferentes = (signoY) & !(signoX);  
+  int signosDiferentes = (signoY) & !(signoX);
   return signosDiferentes | signosIguales;
 }
 /*
@@ -344,7 +349,10 @@ int isGreater(int x, int y) {
  *   Rating: 3
  */
 int replaceByte(int x, int n, int c) {
-  return 2;
+    int bitsDesplazamiento = n << 3;
+    int m = ~(0xFF << bitsDesplazamiento);
+    int cDesplazado = c << bitsDesplazamiento;
+    return (x & m) | cDesplazado;
 }
 //4
 /*
@@ -367,7 +375,9 @@ int absVal(int x) {
  *   Rating: 4
  */
 int bang(int x) {
-  return 2;
+  int desplazado = x >> 31;
+  int complementoDesplazado = (~x + 1) >> 31;
+  return (desplazado | complementoDesplazado) + 1;
 }
 /*
  * isNonZero - Check whether x is nonzero using
@@ -391,7 +401,9 @@ int isNonZero(int x) {
  *   Rating: 4
  */
 int logicalNeg(int x) {
-  return 2;
+  int desplazado = x >> 31;
+  int complementoDesplazado = (~x + 1) >> 31;
+  return (desplazado | complementoDesplazado) + 1;
 }
 
 
