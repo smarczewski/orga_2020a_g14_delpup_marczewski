@@ -412,7 +412,7 @@ unsigned floatAbsVal(unsigned uf) {
   unsigned NaN = 0x7F800000; // NaN >
   unsigned AbsVal = uf & 0x7FFFFFFF; // Signo 0
   if ( AbsVal > NaN ) return uf;
-  else return AbsVal;
+  return AbsVal;
 }
 /*
  * floatIsEqual - Compute f == g for floating point arguments f and g.
@@ -440,7 +440,11 @@ int floatIsEqual(unsigned uf, unsigned ug) {
  *   Rating: 2
  */
 unsigned floatNegate(unsigned uf) {
- return 2;
+  unsigned negativo = uf ^ (1 << 31); //cambia signo
+  unsigned NaN = 0x7F800000; // NaN >
+  unsigned AbsVal = uf & 0x7FFFFFFF; // Signo 0
+  if(AbsVal > NaN) return uf;
+  return negativo;
 }
 /*
  * floatIsLess - Compute f < g for floating point arguments f and g.
