@@ -464,12 +464,12 @@ unsigned floatNegate(unsigned uf) {
  *   Rating: 3
  */
 int floatIsLess(unsigned uf, unsigned ug) {
+    int ufSigno = uf >> 31;
+    int ugSigno = ug >> 31;
+
     if ((uf & 0x7FFFFFFF) > 0x7F800000) return 0;
     if ((ug & 0x7FFFFFFF) > 0x7F800000) return 0;
     if (!((uf | ug) << 1)) return 0;
-
-    int ufSigno = uf >> 31;
-    int ugSigno = ug >> 31;
 
     if (ufSigno > ugSigno) return 1;
     if ((ufSigno == ugSigno) && (ufSigno && uf > ug)) return 1;
@@ -505,10 +505,10 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
+    int exp = x + 127;
+
     if (x <= -127) return 0;
     if (x >= 128) return 0x7f800000;
-
-    int exp = x + 127;
 
     return exp << 23;
 }
