@@ -393,6 +393,9 @@ int isNonZero(int x) {
 int logicalNeg(int x) {
   return 2;
 }
+
+
+
 //float
 /*
  * floatAbsVal - Return bit-level equivalent of absolute value of f for
@@ -406,7 +409,10 @@ int logicalNeg(int x) {
  *   Rating: 2
  */
 unsigned floatAbsVal(unsigned uf) {
-  return 2;
+  unsigned NaN = 0x7F800000; // NaN >
+  unsigned AbsVal = uf & 0x7FFFFFFF; // Signo 0
+  if ( AbsVal > NaN ) return uf;
+  else return AbsVal;
 }
 /*
  * floatIsEqual - Compute f == g for floating point arguments f and g.
