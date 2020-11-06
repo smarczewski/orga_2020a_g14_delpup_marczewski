@@ -464,12 +464,15 @@ unsigned floatNegate(unsigned uf) {
  *   Rating: 3
  */
 int floatIsLess(unsigned uf, unsigned ug) {
-    int ufSigno = uf >> 31;
-    int ugSigno = ug >> 31;
+    int ufSigno;
+    int ugSigno;
 
     if ((uf & 0x7FFFFFFF) > 0x7F800000) return 0;
     if ((ug & 0x7FFFFFFF) > 0x7F800000) return 0;
     if (!((uf | ug) << 1)) return 0;
+
+    ufSigno = uf >> 31;
+    ugSigno = ug >> 31;
 
     if (ufSigno > ugSigno) return 1;
     if ((ufSigno == ugSigno) && (ufSigno && uf > ug)) return 1;
@@ -489,7 +492,22 @@ int floatIsLess(unsigned uf, unsigned ug) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+    int esNegativo = uf >> 31;
+    int exponent = (uf >> 23) & 0xFF;
+    int absVal = uf & 0x7FFFFF; // absVal -> 23 len
+
+    if ( absVal > 0x7F800000 || exponent > 157) // NaN , Infinity
+      return 0x80000000u;
+
+    if(exponent < 127) return 0;
+
+    exponent -= 127;
+    if (exponent <= 23) absVal >>= (23 - exponent);
+    else absVal <<= (exponent - 23);
+
+    if(esNegativo)return -((1 << exponent) | absVal);
+
+    return ((1 << exponent) | absVal);
 }
 /*
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -505,10 +523,12 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    int exp = x + 127;
+    int exp;
 
     if (x <= -127) return 0;
     if (x >= 128) return 0x7f800000;
+
+    exp = x + 127;
 
     return exp << 23;
 }
