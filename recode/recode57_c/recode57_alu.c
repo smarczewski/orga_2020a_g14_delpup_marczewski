@@ -128,12 +128,12 @@ size_t read_codepoint(enum encoding enc,
     if (has_codepoint(enc, buf, nbytes)){
         switch(enc){
             case UTF32BE:
-                *dest = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
+                cp = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
                 n = 4;
                 break;
 
             case UTF32LE:
-                *dest = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+                cp = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
                 n = 4;
                 break;
 
@@ -146,6 +146,29 @@ size_t read_codepoint(enum encoding enc,
             case UTF8:
                 break;
         }
+    }
+    *dest = cp;
+    return n;
+}
+
+size_t write_codepoint(enum encoding enc,
+                       codepoint_t codepoint,
+                       uint8_t *outbuf){
+    size_t n = 0;
+
+    if(enc == UTF32LE){
+        outbuf[0] = codepoint;
+        outbuf[1] &= codepoint >> 8;
+        outbuf[2] &= codepoint >> 16;
+        outbuf[3] &= codepoint >> 24;
+        n = 4;
+    }
+    if(enc == UTF32BE){
+        outbuf[3] = codepoint;
+        outbuf[2] &= codepoint >> 8;
+        outbuf[1] &= codepoint >> 16;
+        outbuf[0] &= codepoint >> 24;
+        n = 4;
     }
     return n;
 }
