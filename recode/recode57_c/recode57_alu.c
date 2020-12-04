@@ -175,18 +175,18 @@ size_t read_codepoint(enum encoding enc,
                 }break;
 
             case UTF8:
-                if (buf[0] <= 0x80){
+                if (nbytes > 0 && buf[0] <= 0x80){
                     cp = buf[0];
                     n = 1;
-                }else if (nbytes == 2){
-                    cp = ((buf[0] & 0x1F) << 6) | (buf[1] & 0x3F);
+                }else if (nbytes > 1 && ((buf[0] & 0xe0) == 0xc0)){
+                    cp = ((buf[0] & 0x1F) << 6) | (buf[1] & 0x3F << 0);
                     n = 2;
-                }else if (nbytes == 3){
-                    cp = ((buf[0] & 0xF) << 12) | ((buf[1] & 0x3F) << 6);
-                    cp |= (buf[2] & 0x3F);
+                }else if (nbytes > 2 && ((buf[0] & 0xf0) == 0xe0)){
+                    cp = ((buf[0] & 0x0F) << 12) | ((buf[1] & 0x3F) << 6);
+                    cp |= ((buf[2] & 0x3F) << 0);
                     n = 3;
-                }else if (nbytes >= 4){
-                    cp = ((buf[0] & 0x7) << 18) | ((buf[1] & 0x3F) << 12);
+                }else if (nbytes > 3 && ((buf[0] & 0xf8) == 0xf0 && (buf[0] <= 0xf4))){
+                    cp = ((buf[0] & 0x07) << 18) | ((buf[1] & 0x3F) << 12);
                     cp |= ((buf[2] & 0x3F) << 6) | (buf[3] & 0x3F);
                     n = 4;
                 }break;
