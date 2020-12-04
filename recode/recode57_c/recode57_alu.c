@@ -82,7 +82,8 @@ bool has_codepoint(enum encoding enc, uint8_t *buf, size_t nbytes){
                 result = true;
             else if (nbytes < 2)
                 result = false;
-            else if (nbytes >= 2) // FALTA HACER ESTA COMPARACION: fijarse que no es high surrogate buf[0:1]
+            else if ((nbytes >= 2) && (0xD800 > ((buf[0] << 8) | buf[1]))
+                     && (((buf[0] << 8) | buf[1]) < 0xDBFF))
                 result = true;
             else
                 result = false;
@@ -93,7 +94,8 @@ bool has_codepoint(enum encoding enc, uint8_t *buf, size_t nbytes){
                 result = true;
             else if (nbytes < 2)
                 result = false;
-            else if (nbytes >= 2) // FALTA HACER COMPARACION: fijarse que no es high surrogate buf[1:0]
+            else if ((nbytes >= 2) && (0xD800 > ((buf[1] << 8) | buf[0]))
+                     && (((buf[1] << 8) | buf[0]) < 0xDBFF))
                 result = true;
             else
                 result = false;
@@ -122,7 +124,9 @@ size_t read_codepoint(enum encoding enc,
                       size_t nbytes,
                       codepoint_t *dest){
 
-    codepoint_t cp;
+    codepoint_t cp = 0;
+    codepoint_t hs;
+    codepoint_t ls;
     size_t n = 0;
 
     if (has_codepoint(enc, buf, nbytes)){
@@ -138,13 +142,54 @@ size_t read_codepoint(enum encoding enc,
                 break;
 
             case UTF16BE:
-                break;
+                hs = ((buf[0] << 8) | buf[1]);
+                if ((hs < 0xD800) || (hs > 0xE000)){
+                    cp = hs;
+                    n = 2;
+                }else if (nbytes >= 4){
+                    // con surrogates
+                    ls = ((buf[2] << 8) | buf[3]);
+                    ls -= 0xDC00;
+                    hs -= 0xD800;
+                    hs *= 0x400;
+                    cp = hs + ls;
+                    cp += 0x10000;
+                    n = 4;
+                }break;
 
             case UTF16LE:
-                break;
+                hs = ((buf[1] << 8) | buf[0]);
+                if ((hs < 0xD800) || (hs > 0xE000)){
+                    cp = hs;
+                    n = 2;
+                }else if (nbytes >= 4){
+                    // con surrogates
+                    ls = ((buf[3] << 8) | buf[2]);
+                    ls -= 0xDC00;
+                    hs -= 0xD800;
+                    hs *= 0x400;
+                    cp = hs + ls;
+                    cp += 0x10000;
+                    n = 4;
+                    n = 4;
+                }break;
 
             case UTF8:
-                break;
+                if (buf[0] <= 0x80){
+                    cp = buf[0];
+                    n = 1;
+                }else if (nbytes == 2){
+                    cp = ((buf[0] & 0x1F) << 6) | (buf[1] & 0x3F);
+                    n = 2;
+                }else if (nbytes == 3){
+                    cp = ((buf[0] & 0xF) << 12) | ((buf[1] & 0x3F) << 6);
+                    cp |= (buf[2] & 0x3F);
+                    n = 3;
+                }else if (nbytes >= 4){
+                    cp = ((buf[0] & 0x7) << 18) | ((buf[1] & 0x3F) << 12);
+                    cp |= ((buf[2] & 0x3F) << 6) | (buf[3] & 0x3F);
+                    n = 4;
+                }break;
         }
     }
     *dest = cp;
@@ -154,21 +199,60 @@ size_t read_codepoint(enum encoding enc,
 size_t write_codepoint(enum encoding enc,
                        codepoint_t codepoint,
                        uint8_t *outbuf){
-    size_t n = 0;
 
     if(enc == UTF32LE){
         outbuf[0] = codepoint;
-        outbuf[1] &= codepoint >> 8;
-        outbuf[2] &= codepoint >> 16;
-        outbuf[3] &= codepoint >> 24;
-        n = 4;
+        outbuf[1] |= codepoint >> 8;
+        outbuf[2] |= codepoint >> 16;
+        outbuf[3] |= codepoint >> 24;
+        return 4;
     }
     if(enc == UTF32BE){
         outbuf[3] = codepoint;
-        outbuf[2] &= codepoint >> 8;
-        outbuf[1] &= codepoint >> 16;
-        outbuf[0] &= codepoint >> 24;
-        n = 4;
+        outbuf[2] |= codepoint >> 8;
+        outbuf[1] |= codepoint >> 16;
+        outbuf[0] |= codepoint >> 24;
+        return 4;
     }
-    return n;
-}
+    if(enc == UTF16BE){
+        if(codepoint <= 0xFFFF){
+            outbuf[0] = codepoint >> 8;
+            outbuf[1] |= codepoint;
+            return 2;
+        }
+    }
+    if(enc == UTF16LE){
+        if(codepoint <= 0xFFFF){
+            outbuf[0] = codepoint;
+            outbuf[1] |= codepoint >> 8;
+            return 2;
+        }
+    }
+    if(enc == UTF8){
+        if (codepoint <= 0x7F) {
+            outbuf[0] = codepoint;
+            return 1;
+        }
+        if (codepoint <= 0x7FF) {
+            outbuf[0] = 0xC0 | (codepoint >> 6);
+            outbuf[1] = 0x80 | (codepoint & 0x3F);
+            return 2;
+        }
+        if (codepoint <= 0xFFFF) {
+            outbuf[0] = 0xE0 | (codepoint >> 12);
+            outbuf[1] = 0x80 | ((codepoint >> 6) & 0x3F);
+            outbuf[2] = 0x80 | (codepoint & 0x3F);
+            return 3;
+        }
+        if (codepoint <= 0x10FFFF) {
+            outbuf[0] = 0xF0 | (codepoint >> 18);
+            outbuf[1] = 0x80 | ((codepoint >> 12) & 0x3F);
+            outbuf[2] = 0x80 | ((codepoint >> 6) & 0x3F);
+            outbuf[3] = 0x80 | (codepoint & 0x3F);
+            return 4;
+        }
+
+    }
+    return 0;
+};
+
