@@ -200,6 +200,10 @@ size_t write_codepoint(enum encoding enc,
                        codepoint_t codepoint,
                        uint8_t *outbuf){
 
+    codepoint_t a = 0;
+    codepoint_t b = 0;
+    codepoint_t c = 0;
+
     if(enc == UTF32LE){
         outbuf[0] = codepoint;
         outbuf[1] |= codepoint >> 8;
@@ -219,6 +223,21 @@ size_t write_codepoint(enum encoding enc,
             outbuf[0] = codepoint >> 8;
             outbuf[1] |= codepoint;
             return 2;
+        }else{
+            a = codepoint - 0x010000;
+
+            b = (a >> 10) + 0xD800;
+            c = (a << 22 >> 22) + 0xDC00;
+
+            outbuf[0] = b >> 8 ;
+
+			outbuf[1] = b ;
+
+			outbuf[2] = c >> 8 ;
+
+			outbuf[3] = c ;
+
+            return 4;
         }
     }
     if(enc == UTF16LE){
@@ -226,6 +245,21 @@ size_t write_codepoint(enum encoding enc,
             outbuf[0] = codepoint;
             outbuf[1] |= codepoint >> 8;
             return 2;
+        }else{
+            a = codepoint - 0x010000;
+
+            b = (a >> 10) + 0xD800;
+            c = (a << 22 >> 22) + 0xDC00;
+
+            outbuf[1] = b >> 8 ;
+
+			outbuf[0] = b ;
+
+			outbuf[3] = c >> 8 ;
+
+			outbuf[2] = c ;
+
+            return 4;
         }
     }
     if(enc == UTF8){
