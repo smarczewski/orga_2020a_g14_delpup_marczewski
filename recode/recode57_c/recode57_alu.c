@@ -1,6 +1,5 @@
 #include "recode57.h"
 
-
 enum encoding bom_to_enc(uint8_t *bom){
 
     enum encoding enc;
