@@ -1,0 +1,5 @@
+# bomba número: NN
+set disassemble-next-line on
+break explode_bomb
+break phase_1
+run sol.txt
