@@ -48,12 +48,11 @@ cola_encolar:              /* Se permite un conditional move */
 	jne	.esta_vacia
 	movq	OFFSET_TAIL(%rbp), %rdx
 	movq	%rbx, OFFSET_NEXT(%rdx)      /* cola->tail->next = nodo */
-	movq	%rbx, OFFSET_TAIL(%rbp)      /* cola->tail = nodo */
 	jmp	.devolver_bool
 .esta_vacia:
 	movq	%rbx, OFFSET_HEAD(%rbp)      /* cola->head = temp */
-	movq	%rbx, OFFSET_TAIL(%rbp)      /* cola->tail = nodo */
 .devolver_bool:
+	movq	%rbx, OFFSET_TAIL(%rbp)      /* cola->tail = nodo */
 	cmpq	$0, %rbx      /* Devuelve falso si el nodo es NULL */
 	setne	%al
 	popq	%rbx
