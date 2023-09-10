@@ -4,7 +4,7 @@
 
 Este repositorio contiene todas las actividades prácticas correspondientes a la materia **[9557] Organización del Computador (Curso Moreno) - 2C2020 - FIUBA**  
 
-Los labs son prácticas de menor envergadura que los TPs. El nombre se debe a que asi se refieren a ellos en el libro en el que se basa la cátedra, **Computer Systems: A Programmer's Perspective (CS:APP)**, los labs que provengan del mismo se corresponden a los del libro y al curso de **CMU** de los autores, por ende estan marcados con esas siglas. 
+Los labs son prácticas de menor envergadura que los TPs. El nombre se debe a que así se refieren a ellos en el libro en el que se basa la cátedra, **Computer Systems: A Programmer's Perspective (CS:APP)**, los labs que provengan del mismo se corresponden a los del libro y al curso de **CMU** de los autores, por ende están marcados con esas siglas. 
 
 ## **Tabla de contenidos**
 
@@ -33,7 +33,7 @@ Los labs son prácticas de menor envergadura que los TPs. El nombre se debe a qu
 ## **Lab 1: Datalab (CS:APP)**
 
 Son 26 ejercicios en lenguaje C que consisten en manipular bits para obtener determinado resultado, esto debe lograrse cumpliendo con ciertas restricciones.
-Tienen el proposito de familiarizarse con la representacion de numeros enteros y de punto flotante a nivel de bits.
+Tienen el propósito de familiarizarse con la representación de números enteros y de punto flotante a nivel de bits.
 
 Herramientas:
 
@@ -87,8 +87,8 @@ La primera parte del lab pedía implementar en `assembly x86_64` una cola enlaza
 ### **2. bomblab (CS:APP)**
 ---
 
-La segunda parte del lab buscaba ejercitar el uso de GDB para examinar y determinar la entrada que "desactivara" un binario de código desconocido.
-En otras palabras hay un binario estructurado en "fases de ejecución", cada una de las cuales precisa de una contraseña para pasar a la siguiente fase.
+La segunda parte del lab buscaba ejercitar el uso de GDB para examinar y determinar la entrada que "desactiva" un binario de código desconocido.
+En otras palabras, hay un binario estructurado en "fases de ejecución", cada una de las cuales precisa de una contraseña para pasar a la siguiente fase.
 
 El esqueleto de invocación de GDB propuesto en clase es:
 
@@ -113,7 +113,7 @@ La idea es poner breaks para evitar las explosiones y encontrar las contraseñas
 
 ## **TP 1: Simulador de caché**
 
-Este trabajo práctico implementa un **simulador de caché parametrizado**. Las distintas caracteristicas de la caché simulada son configurables (tamaño, número de sets y asociatividad), y el programa lee y simula una secuencia de operaciones desde un archivo de trazas.
+Este trabajo práctico implementa un **simulador de caché parametrizado**. Las distintas características de la caché simulada son configurables (tamaño, número de sets y asociatividad), y el programa lee y simula una secuencia de operaciones desde un archivo de trazas.
 En nuestro caso lo implementamos en C, pero también podía hacerse Rust.
 
 ### **Especificaciones:**
@@ -133,9 +133,9 @@ Un ejemplo:
 
 Los cinco campos de cada línea representan:
 
-1. El primer número en hexadecimal es el _instruction pointer_, esto es, la ubicación en memoria de la instrucción que esta siendo ejecutada.
+1. El primer número en hexadecimal es el _instruction pointer_, esto es, la ubicación en memoria de la instrucción que está siendo ejecutada.
 
-2. Un caracter ASCII indicando si la operación es de lectura: `R`; o de escritura: `W`.
+2. Un carácter ASCII indicando si la operación es de lectura: `R`; o de escritura: `W`.
 
 3. El siguiente valor en hexadecimal es la dirección de memoria a la que se realiza el acceso.
 
@@ -210,7 +210,7 @@ asociatividad _E > 1_, el índice de la operación que usó este bloque por últ
 
 #### Resumen y estadísticas:
 
-Durante la simulación, se deben recolectar ciertas ,métricas, que serán mostradas al final de la ejecución en el formato exacto que se muestra abajo. Las métricas necesarias son:
+Durante la simulación, se deben recolectar ciertas métricas, que serán mostradas al final de la ejecución en el formato exacto que se muestra abajo. Las métricas necesarias son:
 * número de lecturas (_loads_)
 * número de escrituras (_stores_)
 * número total de accesos (_loads + stores_)
@@ -250,7 +250,7 @@ Las dos primeras métricas, _loads_ y _stores_, corresponden simplemente al núm
 
 Un "miss de lectura" ocurre ante cualquier operación de tipo `R` que resulte en un acceso a memoria. Un "miss de escritura" es el equivalente pero para operaciones de tipo `W`. En ambos casos se incrementan los valores de _bytes read_ y _bytes written_ según el tamaño del bloque.
 
-Las métricas _dirty rmiss_ y _dirty wmiss_ son el subconjunto de misses en que se escribe en memoria, esto es: se remplaza un bloque de la caché, y ese bloque tenía datos que no habían sido enviados aún a memoria principal (En otras palabras, el dirty bit de la línea remplazada estaba a 1).
+Las métricas _dirty rmiss_ y _dirty wmiss_ son el subconjunto de misses en que se escribe en memoria, esto es: se reemplaza un bloque de la caché, y ese bloque tenía datos que no habían sido enviados aún a memoria principal (En otras palabras, el dirty bit de la línea reemplazada estaba a 1).
 
 Finalmente el _miss rate_ total es la división del número total de _misses_ por el total de accesos
 
@@ -316,15 +316,3 @@ Salida esperada: [adpcm_2048-2-64.txt.](https://orgacomp.github.io/static/caches
 ## **Autores (Grupo 14)**
 - Tomás Del Pup
 - Santiago Marczewski
-
-
-
-
-
-
-
-
-
-
-
-
