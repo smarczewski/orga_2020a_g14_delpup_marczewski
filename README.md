@@ -1,4 +1,4 @@
-# **Trabajos Prácticos y Labs - Organización del Computador (95.57)**
+# **Organización del Computador (95.57)**
 
 ## **Introducción**
 
@@ -8,7 +8,7 @@ Los labs son prácticas de menor envergadura que los TPs. El nombre se debe a qu
 
 ## **Tabla de contenidos**
 
-- [**Trabajos Prácticos y Labs - Organización del Computador (95.57)**](#trabajos-prácticos-y-labs---organización-del-computador-9557)
+- [**Organización del Computador (95.57)**](#organización-del-computador-9557)
   - [**Introducción**](#introducción)
   - [**Tabla de contenidos**](#tabla-de-contenidos)
   - [**Lab 1: Datalab (CS:APP)**](#lab-1-datalab-csapp)
